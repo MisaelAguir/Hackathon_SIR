@@ -1,0 +1,186 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============ Paleta + controles del mapa ============ */
+:root{
+  --riaar-navy:   #0D2B45;
+  --riaar-blue:   #1B4B91;
+  --riaar-orange: #F26419;
+  --riaar-yellow: #F6C445;
+  --riaar-ink:    #0B1320;
+  --riaar-cream:  #F8F9FB;
+
+  /* ===== Fondo mapa (ajustables) ===== */
+  --hdr: 64px;      /* alto aprox. del header sticky */
+  --bgX: 0vw;       /* + derecha | - izquierda */
+  --bgYshift: 0svh; /* empuje vertical extra (positivo = baja) */
+  --mapH: 78svh;    /* alto objetivo en móviles (si lo usas en otras pantallas) */
+
+  /* Chat-aware (lo usas más abajo) */
+  --chatpad-lg: 0px;
+}
+
+/* Altura total por defecto */
+html, body, #root { height: 100%; }
+body{
+  margin: 0;
+  background: var(--riaar-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* =========================================
+   HEADER utilities (para sincronizar fondo/cont.)
+   ========================================= */
+.app-header{ height: var(--hdr); }
+.pt-header{ padding-top: var(--hdr); }
+
+/* =========================================
+   FONDO GLOBAL (APPSHELL) – usa .app-bg
+   ========================================= */
+.app-bg{
+  position: relative;
+  min-height: 100vh;
+  isolation: isolate;
+}
+
+/* Fondo SIEMPRE fixed + cover (no se recorta al hacer scroll) */
+.app-bg::before{
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image: url("/assets/Mapa.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position:
+    calc(50% + var(--bgX, 0vw))
+    calc(50% + var(--bgYshift, 0svh));
+  filter: brightness(.85) saturate(.98) contrast(1.03);
+}
+
+/* Velos y radiales suaves encima del fondo */
+.app-bg::after{
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1200px 400px at 20% -10%, rgba(242,100,25,0.16), transparent 60%),
+    radial-gradient(900px 300px at 120% 10%, rgba(27,75,145,0.16), transparent 60%),
+    linear-gradient(180deg, rgba(11,19,32,.24) 0%, rgba(13,43,69,.22) 50%, rgba(11,19,32,.24) 100%);
+}
+
+/* =========================================
+   VIDRIO / MARCA
+   ========================================= */
+.glass{ backdrop-filter: blur(12px); background: rgba(255,255,255,0.08); }
+.glass-white{ backdrop-filter: blur(14px); background: rgba(255,255,255,0.18); }
+.brand-border{ border-color: rgba(246,196,69,.35); }
+.brand-scroll::-webkit-scrollbar{ height: 8px; width: 8px; }
+.brand-scroll::-webkit-scrollbar-thumb{ background: rgba(242,100,25,.5); border-radius: 999px; }
+.leaflet-container{ border-radius: 1rem; }
+
+/* Título con brillo */
+.brand-title{
+  font-weight: 900; letter-spacing: .2px;
+  background: linear-gradient(
+    90deg,
+    var(--riaar-blue) 0%,
+    #61b0ff 35%,
+    #9fd6ff 55%,
+    var(--riaar-blue) 75%,
+    var(--riaar-yellow) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 10px rgba(97,176,255,.25), 0 2px 24px rgba(246,196,69,.15);
+  animation: titleShine 6s linear infinite;
+  filter: drop-shadow(0 2px 10px rgba(0,0,0,.25));
+}
+@keyframes titleShine{ 0%{background-position:0%} 100%{background-position:200%} }
+@media (max-width: 420px){
+  .brand-title{
+    text-shadow: 0 0 6px rgba(97,176,255,.2), 0 1px 14px rgba(246,196,69,.12);
+    animation-duration: 7.5s;
+  }
+}
+
+/* ===== PINS con glow ===== */
+.riaar-pin .pinStack{ position:relative; width:var(--pinW); height:var(--pinH); transform:translate(-50%,-100%); }
+.riaar-pin .dot{ position:absolute; left:50%; bottom:8px; transform:translateX(-50%); width:12px; height:12px; border-radius:999px; color:var(--c,#94a3b8); background:currentColor; box-shadow:0 0 0 2px rgba(255,255,255,.55); z-index:1; animation:dotPulse 1.6s ease-in-out infinite; }
+.riaar-pin .dot::after{ content:""; position:absolute; inset:0; border-radius:inherit; border:2px solid currentColor; transform:scale(1); opacity:.7; animation:dotRipple 1.6s ease-out infinite; }
+.riaar-pin .glow{ position:absolute; left:50%; bottom:4px; transform:translateX(-50%); width:24px; height:24px; border-radius:999px; background:var(--c,#94a3b8); filter:blur(10px); opacity:.45; z-index:0; animation:glowPulse 1.6s ease-in-out infinite; }
+.riaar-pin .pinTop{ position:absolute; left:50%; bottom:16px; transform:translate(-50%,0); width:var(--pinW); height:var(--pinH); object-fit:contain; z-index:2; pointer-events:none; }
+@keyframes dotPulse{ 0%{transform:translateX(-50%) scale(.9);opacity:.95} 50%{transform:translateX(-50%) scale(1.1);opacity:.70} 100%{transform:translateX(-50%) scale(.9);opacity:.95} }
+@keyframes dotRipple{ 0%{transform:scale(1);opacity:.7} 100%{transform:scale(2.2);opacity:0} }
+@keyframes glowPulse{ 0%{transform:translateX(-50%) scale(.9);opacity:.45} 50%{transform:translateX(-50%) scale(1.2);opacity:.25} 100%{transform:translateX(-50%) scale(.9);opacity:.45} }
+@media (prefers-reduced-motion: reduce){
+  .riaar-pin .dot, .riaar-pin .dot::after, .riaar-pin .glow { animation:none; }
+}
+
+/* ===== Chat-aware ===== */
+@media (min-width: 1024px){
+  body.assistant-open{ --chatpad-lg: 22rem; }
+  body.assistant-open .map-card{
+    transform: translateX(-6px) scale(.995);
+    transition: transform .25s ease;
+  }
+}
+.chat-aware{ padding-right: var(--chatpad-lg); transition: padding-right .25s ease; }
+
+/* ===== Panel del asistente ===== */
+.assistant-panel{
+  --chat-bg: rgba(9,14,24,.78);
+  --chat-border: rgba(246,196,69,.35);
+  background: linear-gradient(180deg, rgba(14,25,44,.88), var(--chat-bg));
+  border: 1px solid var(--chat-border);
+  backdrop-filter: blur(16px) saturate(130%);
+  -webkit-backdrop-filter: blur(16px) saturate(130%);
+  box-shadow: 0 14px 40px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.06) inset;
+  color: #eaf2ff;
+}
+.assistant-panel *, .assistant-panel ::placeholder{ color: #eaf2ff; }
+.assistant-panel .border-b{ border-color: rgba(255,255,255,.12) !important; }
+.assistant-panel [class*="bg-white/10"]{ background: rgba(255,255,255,.10) !important; border: 1px solid rgba(255,255,255,.14); color: #f8fbff; }
+.assistant-panel .ml-auto[class*="bg-white/5"]{ background: rgba(242,100,25,.22) !important; border: 1px solid rgba(242,100,25,.35); color: #fff; }
+.assistant-panel input{ background: rgba(255,255,255,.12) !important; border: 1px solid rgba(255,255,255,.18) !important; color: #fff !important; }
+.assistant-panel input::placeholder{ color: #dbeafe !important; opacity: .9; }
+.assistant-panel button{ box-shadow:none; }
+.assistant-panel .assistant-send,
+.assistant-panel button[type="submit"]{
+  background: var(--riaar-orange) !important;
+  color: #0b1320 !important;
+  font-weight: 800;
+  border: 1px solid rgba(255,255,255,.08);
+}
+.assistant-panel img{ filter: drop-shadow(0 6px 18px rgba(0,0,0,.35)); }
+
+.app-header { --logoH: 45px; }              /* alto base del logo */
+@media (min-width: 1024px){
+  .app-header { --logoH: 45px; }            /* un pelín más en desktop */
+}
+
+.app-header .app-logo{
+  height: var(--logoH);
+  width: 30px;                              /* ← ancho automático */
+  aspect-ratio: 1 / 1;                      /* mantiene forma cuadrada si aplica */
+  object-fit: contain;                      /* no recorta ni estira */
+  flex: 0 0 auto;                           /* no se encoge en el flex */
+  display: block;
+}
+
+.app-header .brand-title{
+  line-height: 1;                           /* alinea mejor verticalmente */
+  white-space: nowrap;                      /* evita saltos raros */
+}
+
+.tap-target { min-width: 40px; min-height: 36px; display: inline-flex; align-items: center; justify-content: center; }
+
+/* Logo en header (evita aplastado) */
+.app-header { --logoH: 40px; }
+@media (min-width: 1024px){ .app-header { --logoH: 44px; } }
+.app-header .app-logo{ height: var(--logoH); width: auto; object-fit: contain; flex: 0 0 auto; display: block; }

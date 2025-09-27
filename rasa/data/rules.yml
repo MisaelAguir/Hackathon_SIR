@@ -1,0 +1,41 @@
+version: "3.1"
+
+rules:
+  - rule: saludar
+    steps:
+      - intent: saludo
+      - action: utter_greet
+
+  # Navegar: dispara la acción que resuelve por catálogos y envía el payload al mapa
+  - rule: navegar (llevar al mapa)
+    steps:
+      - intent: navegar
+      - action: action_geocode_and_route
+
+  # Incidentes: solo confirmación (tu backend/heurística ya maneja la lógica)
+  - rule: incidentes (confirmación)
+    steps:
+      - intent: incidentes
+      - action: utter_incidents_ack
+
+  # Tips: usa la acción que devuelve medidas y payload "tips"
+  - rule: tips (confirmación)
+    steps:
+      - intent: tips
+      - action: action_prevention_tips
+
+  # Artículos: confirmación simple
+  - rule: artículos (confirmación)
+    steps:
+      - intent: articulos
+      - action: utter_articles_ack
+
+  - rule: fuera de alcance
+    steps:
+      - intent: out_of_scope
+      - action: utter_fallback
+
+  - rule: fallback nlu
+    steps:
+      - intent: nlu_fallback
+      - action: utter_fallback

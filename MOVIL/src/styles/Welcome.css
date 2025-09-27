@@ -1,0 +1,225 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ======== Base / Reset para alto completo ======== */
+html, body, #root { height: 100%; }
+body { margin: 0; background:#071b3a; }
+
+/* ======== Variables ======== */
+:root{
+  --bg:#071b3a;
+  --text:#d7e8ff;
+
+  --ant-bottom: 9svh;
+  --label-bottom: 3.4svh;
+
+  /* Foco vertical del mapa (ajústalo si lo quieres un poco más arriba/abajo) */
+  --bgY: 52%;
+}
+
+/* ======== Lienzo ======== */
+.screen{
+  position: relative;
+  width: 100vw;
+  height: 100svh;       /* alto real en móviles */
+  min-height: 100svh;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ======== Fondo global con cambio de imagen por relación de aspecto ======== */
+.bg-full{ position: relative; }
+.bg-full::before{
+  content:"";
+  position:absolute; inset:0;
+  /* Por defecto: teléfono (vertical) */
+  background:
+    #071b3a
+    url("/assets/Mapa.png")
+    center var(--bgY) / cover no-repeat;
+  z-index:0;
+  image-rendering:-webkit-optimize-contrast;
+  image-rendering:crisp-edges;
+}
+/* Opcional: velo sutil */
+.bg-full::after{
+  content:"";
+  position:absolute; inset:0;
+  background: linear-gradient(to bottom,
+    rgba(7,27,58,0) 0%,
+    rgba(7,27,58,0.05) 40%,
+    rgba(7,27,58,0.10) 100%);
+  pointer-events:none;
+  z-index:0;
+}
+.bg-full > *{ position:relative; z-index:1; }
+
+/* Cuando la pantalla ya no es tan alta (≈ 16:9 o más ancha),
+   cambiamos al fondo de escritorio */
+@media (min-aspect-ratio: 1/1){
+  .bg-full::before{
+    background-image: url("/assets/Mapa.png");
+    background-position: center 52%;
+    background-size: cover;
+  }
+}
+
+/* Si quieres ver TODO el croquis a cualquier costo (sin recorte),
+   cambia SOLO en móviles a 'contain' en altura (quedarán bandas laterales): */
+/*
+@media (max-aspect-ratio: 10/19){
+  .bg-full::before{
+    background-size: contain;
+    background-position: center var(--bgY);
+    background-color:#071b3a;  // color de las bandas
+  }
+}
+*/
+
+/* ======== Estrellas ======== */
+.stars{
+  position:absolute; inset:0;
+  background-image: radial-gradient(#8ed3ff 1px, transparent 1px);
+  background-size: 3px 3px;
+  opacity:.08; pointer-events:none; z-index:0;
+}
+
+/* ======== Capa interactiva ======== */
+.mapLayer{
+  position:absolute; inset:0;
+  display:grid; place-items:center;
+  z-index:1;
+}
+.mapBox{
+  position: relative;
+  width: min(92vw, 720px);
+  max-height: 78svh;
+}
+.mapBox.full{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  max-height:none;
+}
+
+/* ======== Partículas / Pines ======== */
+.mapBox .particle{
+  position:absolute; border-radius:999px;
+  transform: translate(-50%, -50%);
+  animation: twinkle 2.4s ease-in-out infinite, drift 7s ease-in-out infinite;
+  z-index:0; pointer-events:none;
+}
+.particle.white{ color:#cfe9ff; background: currentColor; box-shadow:0 0 6px currentColor,0 0 14px currentColor; opacity:.9; }
+.particle.cyan { color:#79e0ff; background: currentColor; box-shadow:0 0 8px currentColor,0 0 18px currentColor,0 0 28px rgba(121,224,255,.55); opacity:.95; }
+.particle.warm { color:#ffd48a; background: currentColor; box-shadow:0 0 8px currentColor,0 0 18px rgba(255,212,138,.85),0 0 28px rgba(255,212,138,.55); opacity:.98; }
+.particle.pink { color:#ff7bd7; background: currentColor; box-shadow:0 0 20px rgba(255,123,215,.9),0 0 40px rgba(255,123,215,.55),0 0 70px rgba(255,123,215,.35); filter: blur(.15px); opacity:.9; }
+.particle.blue { color:#4aa2ff; background: currentColor; box-shadow:0 0 9px rgba(74,162,255,.95),0 0 20px rgba(74,162,255,.75),0 0 34px rgba(74,162,255,.45); opacity:.96; }
+.mapBox .particle:nth-child(3n){ --dx: 6px;  --dy: -3px; }
+.mapBox .particle:nth-child(4n){ --dx: -5px; --dy:  3px; }
+.mapBox .particle:nth-child(5n){ --dx: 3px;  --dy:  4px; }
+.mapBox .particle:nth-child(6n){ --dx: -4px; --dy: -2px; }
+
+@keyframes twinkle{ 0%,100%{ transform: translate(-50%,-50%) scale(.8); opacity:.35; } 50%{ transform: translate(-50%,-50%) scale(1.6); opacity:1; } }
+@keyframes drift{
+  0%{ transform: translate(-50%,-50%); }
+  50%{ transform: translate(calc(-50% + var(--dx, 4px)), calc(-50% + var(--dy, -3px))); }
+  100%{ transform: translate(-50%,-50%); }
+}
+
+/* ======== Pines ======== */
+.mapBox .pin{
+  position:absolute;
+  width: clamp(40px, 7.5vw, 76px);
+  height: clamp(40px, 7.5vw, 76px);
+  object-fit: contain;
+  transform: translate(-50%, -50%) scale(.6);
+  opacity:0;
+  animation: pinPop .6s cubic-bezier(.22,.9,.3,1) forwards;
+  z-index:2;
+}
+@keyframes pinPop{ to{ opacity:1; transform: translate(-50%,-50%) scale(1);} }
+
+/* ======== Hormiga y texto ======== */
+.mapBox .antTap{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: var(--ant-bottom);
+  width: min(56vw, 360px);
+  aspect-ratio: 1/1;
+  display: grid; place-items: center;
+  border: 0; background: transparent; border-radius: 9999px;
+  z-index: 3;
+}
+.mapBox .antImg{
+  display: block;
+  width: clamp(240px, 40vw, 340px);
+  height: auto;
+  filter: drop-shadow(0 14px 30px rgba(0,0,0,.35));
+  animation: pulseScale 1.8s ease-in-out infinite;
+}
+@keyframes pulseScale{ 0%{transform:scale(.96)} 50%{transform:scale(1)} 100%{transform:scale(.96)} }
+
+.ctaLabel{
+  position:absolute;
+  inset-inline: 0;
+  margin-inline:auto;
+  bottom: max(var(--label-bottom), calc(env(safe-area-inset-bottom, 8px) + 10px));
+  text-align:center;
+  font-size: clamp(14px, 2.8vw, 18px);
+  font-weight:600;
+  letter-spacing:.3px;
+  text-shadow: 0 2px 8px rgba(0,0,0,.35);
+  z-index: 3;
+}
+
+/* ======== Título ======== */
+.appTitle{
+  position: absolute;
+  left: 50%; transform: translateX(-50%);
+  top: calc(env(safe-area-inset-top, 0px) + 64px);
+  width: min(92vw, 720px);
+  text-align: center;
+  padding: 10px 20px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: .15em;
+  font-weight: 800;
+  font-size: clamp(20px, 4.2vw, 26px);
+  color: #d7e8ff;
+  background: linear-gradient(to bottom, rgba(7,27,58,.38), rgba(7,27,58,.18));
+  backdrop-filter: blur(2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,.25), inset 0 0 0 1px rgba(255,255,255,.08);
+  z-index: 3;
+}
+
+
+
+.appTitle::after{
+  content:"";
+  display:block; width:48%; height:2px; margin:6px auto 0;
+  border-radius:999px; background: radial-gradient(closest-side, #79e0ff, transparent);
+  opacity:.7;
+}
+
+/* Tablets / Desktop */
+@media (min-width: 600px){
+  :root{ --ant-bottom: 8svh; --label-bottom: 4.5svh; }
+  .mapBox .antTap{ width: min(48vw, 380px); }
+  .mapBox .antImg{ width: clamp(260px, 32vw, 380px); }
+}
+@media (min-width: 1024px){
+  :root{ --ant-bottom: 9svh; --label-bottom: 5svh; }
+  .mapBox{ width: min(70vw, 900px); max-height: 72svh; }
+  .mapBox .antImg{ width: clamp(280px, 28vw, 420px); }
+}
+@media (min-width: 768px){
+  .appTitle{
+    top: calc(env(safe-area-inset-top, 50px) + 20px);
+    font-size: clamp(16px, 2.6vw, 28px);
+    width: min(80vw, 820px);
+  }
+}
+
+

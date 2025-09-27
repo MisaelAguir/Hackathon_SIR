@@ -1,0 +1,22 @@
+{
+  "lookup": {
+    "rules": {
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"prevention_advice\"}}]": "action_prevention_tips",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"prevention_advice\"}}, {\"prev_action\": {\"action_name\": \"action_prevention_tips\"}, \"user\": {\"intent\": \"prevention_advice\"}}]": "action_listen",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"navigate_to\"}}]": "action_geocode_and_route",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"navigate_to\"}}, {\"prev_action\": {\"action_name\": \"action_geocode_and_route\"}, \"user\": {\"intent\": \"navigate_to\"}}]": "action_listen"
+    },
+    "rule_only_slots": [],
+    "rule_only_loops": [],
+    "rules_for_loop_unhappy_path": {},
+    "rules_not_in_stories": [
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"navigate_to\"}}]",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"prevention_advice\"}}, {\"prev_action\": {\"action_name\": \"action_prevention_tips\"}, \"user\": {\"intent\": \"prevention_advice\"}}]",
+      "predicting default action with intent session_start",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"prevention_advice\"}}]",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"navigate_to\"}}, {\"prev_action\": {\"action_name\": \"action_geocode_and_route\"}, \"user\": {\"intent\": \"navigate_to\"}}]",
+      "predicting default action with intent back",
+      "predicting default action with intent restart"
+    ]
+  }
+}

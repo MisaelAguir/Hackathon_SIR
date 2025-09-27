@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ——— Base mínima (no global) ——— */
+:root{
+  --bg:#071b3a;
+  --text:#d7e8ff;
+}
+
+/* ======== Contenedor de LOGIN ======== */
+.login.screen{
+  position: relative;
+  width: 100vw;
+  height: 100svh;            /* alto real móvil */
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Fondo propio de Login (NO interfiere con Welcome) */
+.login-bg{ position: relative; }
+
+/* (1) Capa de mapa: estaba bien, solo baja detrás del contenido */
+.login-bg::before{
+  content:"";
+  position:absolute; inset:0;
+  z-index:0; /* ← detrás del overlay y del contenido */
+  background:
+    #071b3a
+    url("/assets/Mapa.png")
+    center 52% / cover no-repeat;
+  image-rendering:-webkit-optimize-contrast;
+  image-rendering:crisp-edges;
+  filter: brightness(.78) saturate(.95) contrast(1.02);
+}
+
+/* (2) Overlay más sutil: antes le faltaban content/position */
+.login-bg::after{
+  content:"";
+  position:absolute; inset:0;
+  z-index:-1;              /* ← encima del mapa, debajo del contenido */
+  pointer-events:none;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(7,27,58,.35) 0%,
+      rgba(7,27,58,.22) 35%,
+      rgba(7,27,58,.12) 70%,
+      rgba(7,27,58,.20) 100%
+    );
+}
+
+/* asegura contenido por encima del fondo */
+.login-bg > *{ position:relative; z-index:1; }
+
+/* Desktop/cuadrado: cambia a fondo de escritorio del login */
+@media (min-aspect-ratio: 1/1){
+  .login-bg::before{
+    background-image: url("/assets/Mapa.png");
+    background-position: center 52%;
+    background-size: cover;
+  }
+}
+
+/* ======== Centro seguro (safe area + padding) ======== */
+.login-center{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  padding:
+    calc(env(safe-area-inset-top, 10px) + 12px)
+    16px
+    calc(env(safe-area-inset-bottom, 10px) + 12px);
+}
+
+/* (Opcional) Pulido del Card si necesitas un efecto glass local aquí: */
+.glass-white{
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: 0 20px 60px rgba(0,0,0,.35);
+  border-radius: 18px;
+}
+
+/* (3) Logo: corrige el 700px y evita deformación */
+.login-logo{
+  height: 56px;     /* móvil */
+  width: auto;      /* no se deforma */
+  object-fit: contain;
+}
+@media (min-width: 480px){
+  .login-logo{ height: 80px; }
+}

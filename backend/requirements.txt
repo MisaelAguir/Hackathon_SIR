@@ -1,0 +1,12 @@
+
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+python-dotenv==1.0.1
+httpx==0.27.0
+pyodbc==5.1.0
+
+geopy==2.4.1         # geocodificación (Nominatim)
+cachetools==5.3.3    # caché TTL para geocoding/rutas
+rapidfuzz==3.9.6     # autocorrección suave de lugares (typos)
+tenacity==8.2.3      # reintentos con backoff en llamadas externas
+orjson==3.10.3  

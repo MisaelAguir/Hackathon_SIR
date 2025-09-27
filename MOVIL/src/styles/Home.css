@@ -1,0 +1,185 @@
+:root{
+  --home-max: 680px;
+  --ant-shift: 16vh;
+}
+@media (min-width: 480px){  :root{ --ant-shift: 30vh; } }
+@media (min-width: 640px){  :root{ --ant-shift: 32vh; } }
+@media (min-width: 1024px){ :root{ --ant-shift: 34vh; } }
+@media (min-width: 1280px){ :root{ --ant-shift: 36vh; } }
+
+/* ====== contenedor raíz ====== */
+.home-wrap{ position: relative; overflow: visible; }
+
+/* ====== grilla principal ====== */
+.home-grid{
+  display: grid;
+  grid-template-columns: 1fr;         /* default */
+  gap: clamp(14px, 3vw, 22px);
+  align-items: start;
+  padding: 0 12px 24px;
+}
+
+/* === MÓVIL (teléfono): 2 columnas; HERO ocupa las dos arriba === */
+@media (max-width: 639px){
+  .home-grid{
+    grid-template-columns: 1.1fr 0.9fr;              /* izquierda / derecha */
+    grid-template-areas:
+      "hero hero"                                     /* título arriba a lo ancho */
+      "left figure";                                  /* cards a la par de la hormiga */
+    column-gap: 12px;
+  }
+  .home-hero{ grid-area: hero; }
+  .home-left{ grid-area: left; }
+  .home-figure{ grid-area: figure; }
+}
+
+/* Desktop / tablet (comportamiento base) */
+@media (min-width: 640px){
+  .home-grid{
+    grid-template-columns: minmax(0,1fr) minmax(240px,40vw);
+    padding-inline: 14px;
+  }
+}
+@media (min-width: 1024px){
+  .home-grid{
+    grid-template-columns: minmax(0,1fr) minmax(340px,36vw);
+    padding-inline: 24px;
+    gap: 2rem;
+  }
+}
+
+/* ====== columna izquierda ====== */
+.home-left{
+  max-width: var(--home-max);
+  width: 100%;
+  padding-right: clamp(0px, 4vw, 24px);
+}
+.home-lead{ max-width: 56ch; font-size: clamp(13px, 2.1vw, 18px); }
+
+/* botones */
+.home-actions{ margin-top: 12px; display:flex; flex-wrap:wrap; gap: 10px; }
+.home-btn, .home-btn-outline{ font-size: clamp(12px,1.9vw,16px); padding: 8px 14px; }
+.home-btn-outline{ border: 1px solid rgba(255,255,255,.2); background: transparent; }
+.home-btn-outline:hover{ background: rgba(255,255,255,.06); }
+
+/* ====== tarjetas — MÁS CORTAS en móvil ====== */
+.home-features{
+  margin-top: clamp(14px, 3vw, 18px);
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  max-width: var(--home-max);
+}
+@media (min-width: 640px){
+  .home-features{ grid-template-columns: repeat(2, minmax(0,1fr)); max-width: 900px; }
+}
+@media (min-width: 1280px){
+  .home-features{ grid-template-columns: repeat(3, minmax(240px,1fr)); }
+}
+
+/* compactación de cards */
+.home-card{
+  backdrop-filter: blur(14px);
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 12px;
+  min-height: 72px;                 /* ↓ antes 86px */
+}
+.home-card-header{
+  padding-top: 8px;                 /* ↓ antes 10px */
+  padding-bottom: 0px;              /* ↓ antes 2px */
+  display:flex; align-items:center; gap: 8px;
+}
+.home-card-icon{ height: 18px; width: 18px; color: var(--riaar-yellow, #F6C445); flex-shrink:0; }
+.home-card-title{ font-size: clamp(13px, 1.9vw, 14px); line-height: 1.1; }
+.home-card-content{
+  padding-top: 0; padding-bottom: 8px;          /* ↓ */
+  color: rgba(255,255,255,.8);
+  font-size: clamp(11.5px, 1.7vw, 12.5px);      /* ↓ */
+  line-height: 1.22;
+}
+
+/* ====== hormiga a la par en móvil ====== */
+.home-figure{
+  display:flex; align-items:flex-end; justify-content:center;
+  padding-right: 0;
+}
+.home-figure-stick{
+  position: static; top: auto;
+  display:flex; align-items:flex-end; justify-content:center; width:100%;
+}
+.home-ant{
+  max-width: 100%; height:auto; user-select:none;
+  filter: drop-shadow(0 30px 70px rgba(0,0,0,.45));
+  width: min(46vw, 360px);      /* ocupa su columna sin tapar texto */
+  max-height: none;
+  transform: none;             /* sin “bajada” en móvil */
+  margin-top: 6px;
+}
+
+/* Desde 640px — base sticky/bajada (se sobrescribe en el bloque tablet de abajo) */
+@media (min-width: 640px){
+  .home-figure{ justify-content:flex-end; padding-right: 12px; }
+  .home-figure-stick{ position: sticky; top: 24rem; justify-content:flex-end; }
+  .home-ant{
+    width: min(42vw, 420px);
+    max-height: 68vh;
+    transform: translateY(var(--ant-shift));
+    margin-top: 0;
+  }
+}
+@media (min-width: 1024px){ .home-figure-stick{ top: 26rem; } .home-ant{ width: 360px; } }
+@media (min-width: 1280px){ .home-figure-stick{ top: 28rem; } .home-ant{ width: 400px; } }
+@media (min-width: 1536px){ .home-ant{ width: 460px; } }
+
+/* =========================
+   TABLET (640–1023 px)
+   Mantener layout de teléfono y ampliar un poco
+   ========================= */
+@media (min-width: 640px) and (max-width: 1023.98px){
+
+  /* Mismo “grid” que móvil: hero arriba a todo lo ancho,
+     y abajo dos columnas (left / figure) */
+  .home-grid{
+    grid-template-columns: 1.15fr 0.85fr;
+    grid-template-areas:
+      "hero hero"
+      "left figure";
+    column-gap: 16px;
+    padding-inline: 16px;
+  }
+  .home-hero   { grid-area: hero; }
+  .home-left   { grid-area: left; }
+  .home-figure { grid-area: figure; }
+
+  /* En tablet SIN sticky (igual que teléfono) */
+  .home-figure{
+    justify-content: center;
+    padding-right: 0;
+  }
+  .home-figure-stick{
+    position: static;
+    top: auto;
+    justify-content: center;
+  }
+
+  /* Hormiga un poco más grande que en móvil */
+  .home-ant{
+    width: min(50vw, 420px);
+    max-height: none;
+    transform: none;
+    margin-top: 10px;
+  }
+
+  /* Tipografías/controles levemente más grandes */
+  .home-lead{ font-size: clamp(14px, 2vw, 19px); }
+  .home-btn, .home-btn-outline{
+    font-size: clamp(13px, 1.9vw, 17px);
+    padding: 9px 16px;
+  }
+
+  /* Cards algo más altas y legibles */
+  .home-card{ min-height: 78px; }
+  .home-card-title{ font-size: clamp(13.5px, 1.9vw, 15px); }
+  .home-card-content{ font-size: clamp(12px, 1.7vw, 13.5px); }
+}

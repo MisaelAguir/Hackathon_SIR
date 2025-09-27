@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* —— Paleta mínima local —— */
+:root{
+  --reg-bg: #071b3a;
+  --reg-text: #d7e8ff;
+}
+
+/* ===== Contenedor raíz de la página Registro ===== */
+.register.screen{
+  position: relative;
+  width: 100vw;
+  height: 100svh;      /* alto real en móviles con barra */
+  overflow: hidden;
+  background: var(--reg-bg);
+  color: var(--reg-text);
+}
+
+/* Fondo propio — igual que login (misma imagen) */
+.register-bg{ position: relative; }
+
+/* Capa de imagen (debajo de todo) */
+.register-bg::before{
+  content:"";
+  position:absolute; inset:0;
+  z-index:0;
+  background:
+    #071b3a
+    url("/assets/Mapa.png")
+    center 52% / cover no-repeat;
+  image-rendering:-webkit-optimize-contrast;
+  image-rendering:crisp-edges;
+  filter: brightness(.78) saturate(.95) contrast(1.02);
+}
+
+/* Capa de velos encima de la imagen */
+.register-bg::after{
+  content:"";
+  position:absolute; inset:0;
+  z-index:0;
+  pointer-events:none;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(7,27,58,.35) 0%,
+      rgba(7,27,58,.22) 35%,
+      rgba(7,27,58,.12) 70%,
+      rgba(7,27,58,.20) 100%
+    );
+}
+
+/* Todo el contenido debe estar por encima del fondo */
+.register-bg > *{ position:relative; z-index:1; }
+
+/* Desktop/cuadrado: mismo comportamiento que login */
+@media (min-aspect-ratio: 1/1){
+  .register-bg::before{
+    background-image: url("/assets/Mapa.png");
+    background-position: center 52%;
+    background-size: cover;
+  }
+}
+
+/* ===== Centro seguro (safe areas) ===== */
+.register-center{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  padding:
+    calc(env(safe-area-inset-top, 10px) + 12px)
+    16px
+    calc(env(safe-area-inset-bottom, 10px) + 12px);
+}
+
+/* ===== Card / contenedor de registro ===== */
+.register-card{
+  width: 100%;
+  max-width: 720px;             /* más ancho que login para 2 columnas */
+  border-radius: 18px;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: 0 20px 60px rgba(0,0,0,.35);
+}
+
+/* Títulos y espaciados */
+.register-title{
+  @apply text-2xl sm:text-3xl font-extrabold tracking-tight;
+}
+
+/* Ajustes de inputs compactos para caber mejor en móvil */
+.register-form{
+  @apply grid gap-4 pt-6;
+}
+@media (min-width: 768px){
+  .register-form{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Ajustes de labels */
+.register-label{
+  @apply text-white/85 text-sm;
+}
+
+/* Botonera inferior */
+.register-actions{
+  @apply flex items-center justify-between pt-2 col-span-full;
+}

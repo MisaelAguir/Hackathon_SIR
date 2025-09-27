@@ -1,0 +1,27 @@
+version: "3.1"
+nlu:
+
+- intent: navigate_to
+  examples: |
+    - ir a [Managua](location)
+    - llévame a [Santa Teresa, Carazo](location)
+    - quiero ir a [León](location)
+    - vamos a [Granada](location)
+    - ubícame en [Masaya](location)
+    - ir a [Estelí](location)
+    - ir a [Jinotepe](location)
+
+- intent: prevention_advice
+  examples: |
+    - medidas de [terremoto](risk_type)
+    - prevención [inundación](risk_type)
+    - consejos para [incendio](risk_type)
+    - ¿qué hago ante [huracán](risk_type)?
+
+# Sinónimos de riesgos para normalizar
+- synonym: inundación
+  examples: |
+    - inundacion
+- synonym: huracán
+  examples: |
+    - huracan

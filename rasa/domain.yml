@@ -1,0 +1,42 @@
+version: "3.1"
+
+intents:
+  - navigate_to
+  - prevention_advice
+
+entities:
+  - location
+  - risk_type
+
+slots:
+  location:
+    type: text
+    influence_conversation: true
+    mappings:
+      # si el NLU detecta la entidad location, llénalo desde ahí
+      - type: from_entity
+        entity: location
+      # si no hay entidad, toma todo el texto (útil para "ir a Santa Teresa Carazo")
+      - type: from_text
+
+  risk_type:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: risk_type
+      - type: from_text
+
+responses:
+  utter_ask_location:
+    - text: "¿A qué lugar exactamente?"
+  utter_ask_risk_type:
+    - text: "¿Qué riesgo? (terremoto, inundación, incendio, huracán)"
+
+actions:
+  - action_geocode_and_route
+  - action_prevention_tips
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true
